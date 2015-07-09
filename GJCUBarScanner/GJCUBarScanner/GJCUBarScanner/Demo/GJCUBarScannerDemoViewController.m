@@ -1,0 +1,65 @@
+//
+//  GJCUBarScannerDemoViewController.m
+//  GJCoreUserInterface
+//
+//  Created by ZYVincent on 14-11-1.
+//  Copyright (c) 2014年 ZYProSoft. All rights reserved.
+//
+
+#import "GJCUBarScannerDemoViewController.h"
+#import "GJCUBarScannerViewController.h"
+
+@interface GJCUBarScannerDemoViewController ()<GJCUBarScannerViewControllerDelegate>
+
+@end
+
+@implementation GJCUBarScannerDemoViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view.
+    
+    UIButton *callScanner = [TVGDebugQuickUI buttonAddOnView:self.view title:@"扫描" target:self selector:@selector(scanner)];
+    callScanner.gjcf_top = 100;
+    callScanner.gjcf_left = 50;
+    
+}
+
+- (void)scanner
+{
+    GJCUBarScannerViewController *scannerVC = [[GJCUBarScannerViewController alloc]initWithScanWaitSeconds:5];
+    scannerVC.scannerDelegate = self;
+    [self presentViewController:scannerVC animated:YES completion:nil];
+}
+
+#pragma mark - GJCUBarScannerViewControllerDelegate
+
+- (void)barScanner:(GJCUBarScannerViewController *)scanner didSuccessScannerWithResult:(NSString *)resultBarString
+{
+    
+    NSDictionary *jsonDict = [NSJSONSerialization JSONObjectWithData:[resultBarString dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingAllowFragments error:nil];
+    [[UIApplication sharedApplication]openURL:[NSURL URLWithString:[jsonDict objectForKey:@"content"]]];
+}
+
+- (void)barScannerDidFaildByNoAuthorizeCamera:(GJCUBarScannerViewController *)scanner
+{
+    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"提示" message:[NSString stringWithFormat:@"请授权访问你的摄像头"] delegate:nil cancelButtonTitle:nil otherButtonTitles:@"确定", nil];
+    [alert show];
+}
+
+- (void)barScannerDidFaildByTooLongTimeScannedNothing:(GJCUBarScannerViewController *)scanner
+{
+    
+}
+
+- (void)barScannerWillCancel:(GJCUBarScannerViewController *)scanner
+{
+    
+}
+
+- (void)barScannerWillShow:(GJCUBarScannerViewController *)scanner
+{
+    
+}
+
+@end
